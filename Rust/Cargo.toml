@@ -1,2 +1,2 @@
 [workspace]
-members = ["mcn-lsp", "redstone_compiler"]
+members = ["mcn-ls", "redstone_compiler"]

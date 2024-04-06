@@ -1,4 +1,4 @@
-import init, { greet } from "my-crate";
+import init, { greet } from "mcn-ls";
 
 init().then(() => {
   console.log("init wasm-pack");
@@ -27,7 +27,7 @@ const run = async () => {
           brackets: [{ open: "(", close: ")", token: "delimiter.parenthesis" }],
           ignoreCase: false,
 
-          tokenPostfix: ".mcn-16",
+          // tokenPostfix: ".mcn-16",
           keywords: [
             "inline",
             "if",
