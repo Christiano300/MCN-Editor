@@ -11,13 +11,10 @@
   },
   "scripts": {
     "dev": "vite --host --debug",
-    "build": "vite build --debug"
+    "build": "vite build --debug",
+    "optimize": "vite optimize --debug"
   },
   "dependencies": {
-    "monaco-languageclient": "^8.1.1",
-    "@codingame/monaco-vscode-keybindings-service-override": "3.2.3",
-    "@codingame/monaco-vscode-textmate-service-override": "3.2.3",
-    "@codingame/monaco-vscode-theme-service-override": "3.2.3",
-    "@codingame/monaco-vscode-languages-service-override": "3.2.3"
+    "monaco-languageclient": "^8.1.1"
   }
 }

@@ -3,6 +3,21 @@ import init, { compile } from "mcn-ls";
 import * as monaco from "monaco-editor";
 
 import { initServices } from "monaco-languageclient/vscode/services";
+const vividColors = {
+  chalky: "e5c07b",
+  coral: "ef596f",
+  dark: "5c6370",
+  error: "f44747",
+  fountainBlue: "2bbac5",
+  green: "89ca78",
+  invalid: "ffffff",
+  lightDark: "7f848e",
+  lightWhite: "abb2bf",
+  malibu: "61afef",
+  purple: "d55fde",
+  whiskey: "d19a66",
+  deepRed: "BE5046",
+};
 
 init().then(async () => {
   const code = localStorage.getItem("monaco-editor-code") ?? "hi";
@@ -17,10 +32,54 @@ init().then(async () => {
   monaco.languages.setLanguageConfiguration("mcn-16", languageConfig);
   monaco.languages.setMonarchTokensProvider("mcn-16", tokenProvider);
 
+  monaco.editor.defineTheme("mcn-16-dark", {
+    base: "vs-dark",
+    inherit: true,
+    rules: [
+      {
+        token: "keyword",
+        foreground: vividColors.purple,
+      },
+      {
+        token: "number",
+        foreground: vividColors.whiskey,
+      },
+      {
+        token: "number.hex",
+        foreground: vividColors.green,
+      },
+      {
+        token: "number.binary",
+        foreground: vividColors.green,
+      },
+      {
+        token: "identifier",
+        foreground: vividColors.coral,
+      },
+      {
+        token: "operator",
+        foreground: vividColors.fountainBlue,
+      },
+      {
+        token: "punctuation.separator",
+        foreground: vividColors.lightWhite,
+      },
+      {
+        token: "comment",
+        foreground: vividColors.dark,
+      },
+      {
+        token: "invalid",
+        foreground: vividColors.error,
+      },
+    ],
+    colors: { "editor.background": "#282c34" },
+  });
+
   const htmlElement = document.getElementById("monaco-editor-root")!;
   const editor = monaco.editor.create(htmlElement, {
     language: "mcn-16",
-    theme: "vs-dark",
+    theme: "mcn-16-dark",
     value: code,
   });
 
@@ -100,7 +159,7 @@ const tokenProvider: monaco.languages.IMonarchLanguage = {
       { include: "@whitespace" },
       // delimiters and operators
       [/[()]/, "@brackets"],
-      [/[,.]/, "punctuation.separator"],
+      [/[,\.;]/, "punctuation.separator"],
       [/@symbols/, "operator"],
       // identifiers and keywords
       [
@@ -188,7 +247,7 @@ const languageConfig: monaco.languages.LanguageConfiguration = {
     {
       beforeText: new RegExp("^\\s*(forever|else|(if|elif|elseif|while).*)$"),
       action: {
-        indentAction: monaco.languages.IndentAction.IndentOutdent,
+        indentAction: monaco.languages.IndentAction.Indent,
       },
     },
     {
