@@ -6,13 +6,18 @@
   "devDependencies": {
     "vite": "^3.2.10",
     "vite-plugin-monaco-editor": "^1.1.0",
-    "vite-plugin-wasm-pack": "^0.1.12"
+    "vite-plugin-wasm-pack": "^0.1.12",
+    "esbuild": "0.20.2"
   },
   "scripts": {
     "dev": "vite --host --debug",
     "build": "vite build --debug"
   },
   "dependencies": {
-    "monaco-editor-wrapper": "^4.0.2"
+    "monaco-languageclient": "^8.1.1",
+    "@codingame/monaco-vscode-keybindings-service-override": "3.2.3",
+    "@codingame/monaco-vscode-textmate-service-override": "3.2.3",
+    "@codingame/monaco-vscode-theme-service-override": "3.2.3",
+    "@codingame/monaco-vscode-languages-service-override": "3.2.3"
   }
 }

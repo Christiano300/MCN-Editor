@@ -1,3 +1,18 @@
+.flex {
+    display: flex;
+}
+
 #monaco-editor-root {
     height: 40em;
+    width: 50em;
+}
+
+#out {
+    user-select: all;
+    padding: 0 1em;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+#out.error {
+    color: #777;
 }

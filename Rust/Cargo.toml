@@ -1,2 +1,3 @@
 [workspace]
 members = ["mcn-ls", "redstone_compiler"]
+resolver = "2"
