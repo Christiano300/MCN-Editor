@@ -1,1 +1,2 @@
 wasm-pack build ./Rust/mcn-ls --target web
+cp www/node_modules/mcn-ls/mcn_ls_bg.wasm www/assets

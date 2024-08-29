@@ -3,6 +3,52 @@ import init, { compile } from "mcn-ls";
 import * as monaco from "monaco-editor";
 
 import { initServices } from "monaco-languageclient/vscode/services";
+import {
+  MonacoLanguageClient,
+} from "monaco-languageclient";
+
+import {
+  MessageTransports,
+  MessageReader,
+  MessageWriter,
+} from "vscode-languageclient";
+
+import {
+  BrowserMessageReader,
+  BrowserMessageWriter,
+} from "vscode-jsonrpc/browser";
+import { tokenProvider } from "./languageDef";
+import { languageConfig } from "./languageDef";
+
+const compileCode = (
+  editor: monaco.editor.IStandaloneCodeEditor,
+  out: HTMLElement
+): any => {
+  try {
+    const asm = compile(editor.getValue());
+    out.innerText = asm;
+    out.classList.remove("error");
+  } catch (error) {
+    out.classList.add("error");
+  }
+};
+
+const languageWorker = new Worker(
+  new URL("./worker/languageWorker.ts", import.meta.url),
+  { type: "module" }
+);
+
+const getConnections: (
+  encoding: string
+) => Promise<MessageTransports> = async () => {
+  const reader: MessageReader = new BrowserMessageReader(languageWorker);
+  const writer: MessageWriter = new BrowserMessageWriter(languageWorker);
+  return Promise.resolve<MessageTransports>({
+    reader,
+    writer,
+  });
+};
+
 const vividColors = {
   chalky: "e5c07b",
   coral: "ef596f",
@@ -23,7 +69,6 @@ init().then(async () => {
   const code = localStorage.getItem("monaco-editor-code") ?? "hi";
 
   await initServices({
-    userServices: {},
     debugLogging: true,
   });
 
@@ -93,168 +138,19 @@ init().then(async () => {
   });
 
   compileCode(editor, out);
+
+  const languageClient = new MonacoLanguageClient({
+    name: "MCN Language Client",
+    clientOptions: {
+      documentSelector: [{ language: "mcn-16" }],
+      // synchronize: {
+      //   configurationSection: "mcn",
+      // },
+    },
+    connectionProvider: {
+      get: getConnections,
+    },
+  });
+
+  languageClient.start();
 });
-
-function compileCode(
-  editor: monaco.editor.IStandaloneCodeEditor,
-  out: HTMLElement
-): any {
-  try {
-    const asm = compile(editor.getValue());
-    out.innerText = asm;
-    out.classList.remove("error");
-  } catch (error) {
-    out.classList.add("error");
-  }
-}
-
-const tokenProvider: monaco.languages.IMonarchLanguage = {
-  brackets: [{ open: "(", close: ")", token: "delimiter.parenthesis" }],
-  defaultToken: "invalid",
-  ignoreCase: false,
-
-  tokenPostfix: ".mcn-16",
-  keywords: [
-    "inline",
-    "if",
-    "elif",
-    "elseif",
-    "else",
-    "forever",
-    "while",
-    "end",
-    "pass",
-    "use",
-    "var",
-    "debug",
-  ],
-
-  operators: [
-    "+",
-    "-",
-    "*",
-    "&",
-    "|",
-    "^",
-    "+=",
-    "-=",
-    "*=",
-    "&=",
-    "|=",
-    "^=",
-    "=",
-    "==",
-    "!=",
-    "<",
-    ">",
-    "<=",
-    ">=",
-  ],
-
-  symbols: /[+\-*&|^]=?|!=|[=<>]=?/,
-
-  tokenizer: {
-    root: [
-      { include: "@numbers" },
-      { include: "@whitespace" },
-      // delimiters and operators
-      [/[()]/, "@brackets"],
-      [/[,\.;]/, "punctuation.separator"],
-      [/@symbols/, "operator"],
-      // identifiers and keywords
-      [
-        /[\w][\d\w]*/,
-        {
-          cases: {
-            "@keywords": "keyword",
-            "@default": "identifier",
-          },
-        },
-      ],
-    ],
-    whitespace: [
-      [/[ \t\r\n;]+/, ""],
-      [/#.*$/, "comment"],
-    ],
-    numbers: [
-      [/0x[0-9a-f]+/, "number.hex"],
-      [/0b[01]+/, "number.binary"],
-      [/\d+/, "number"],
-    ],
-  },
-};
-
-const languageConfig: monaco.languages.LanguageConfiguration = {
-  comments: {
-    lineComment: "#",
-  },
-  brackets: [["(", ")"]],
-  autoClosingPairs: [
-    {
-      open: "(",
-      close: ")",
-    },
-  ],
-  surroundingPairs: [
-    {
-      open: "(",
-      close: ")",
-    },
-    {
-      open: "forever",
-      close: "end",
-    },
-    {
-      open: "while",
-      close: "end",
-    },
-    {
-      open: "if",
-      close: "end",
-    },
-    {
-      open: "if",
-      close: "else",
-    },
-    {
-      open: "if",
-      close: "elif",
-    },
-    {
-      open: "if",
-      close: "elseif",
-    },
-    {
-      open: "elif",
-      close: "end",
-    },
-    {
-      open: "elseif",
-      close: "end",
-    },
-    {
-      open: "else",
-      close: "end",
-    },
-  ],
-  indentationRules: {
-    increaseIndentPattern: new RegExp(
-      "^\\s*(forever|else|(if|elif|elseif|while).*)\\s*$"
-    ),
-    decreaseIndentPattern: new RegExp("^\\s*(end)\\s*$"),
-  },
-  onEnterRules: [
-    {
-      beforeText: new RegExp("^\\s*(forever|else|(if|elif|elseif|while).*)$"),
-      action: {
-        indentAction: monaco.languages.IndentAction.Indent,
-      },
-    },
-    {
-      beforeText: new RegExp("^\\s*(end)$"),
-      action: {
-        indentAction: monaco.languages.IndentAction.Outdent,
-      },
-    },
-  ],
-};

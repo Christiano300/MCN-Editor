@@ -9,6 +9,7 @@ crate-type = ["cdylib", "rlib"]
 [dependencies]
 cfg-if = "1.0.0"
 wasm-bindgen = "0.2.63"
+js-sys = "0.3.68"
 redstone_compiler = { path = "../redstone_compiler" }
 
 # The `console_error_panic_hook` crate provides better debugging of panics by
@@ -23,6 +24,9 @@ console_error_panic_hook = { version = "0.1.6", optional = true }
 #
 # Unfortunately, `wee_alloc` requires nightly Rust when targeting wasm for now.
 wee_alloc = { version = "0.4.5", optional = true }
+lsp-types = "0.95.1"
+serde-wasm-bindgen = "0.6.5"
+serde = { version = "1.0.199", features = ["derive"] }
 
 [dev-dependencies]
 wasm-bindgen-test = "0.3.13"

@@ -1,0 +1,8 @@
+{
+    "compilerOptions": {
+        "lib": ["webworker", "ESNext"],
+        "module": "ESNext",
+        "moduleResolution": "Bundler"
+    },
+    "include": ["./*.ts"]
+}

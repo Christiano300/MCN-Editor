@@ -2,6 +2,8 @@ extern crate cfg_if;
 extern crate redstone_compiler;
 extern crate wasm_bindgen;
 
+mod language;
+mod server;
 mod utils;
 
 use cfg_if::cfg_if;
@@ -17,7 +19,8 @@ cfg_if! {
 
 #[wasm_bindgen]
 extern "C" {
-    fn alert(s: &str);
+    #[wasm_bindgen(js_namespace = console)]
+    fn log(s: &str);
 }
 
 #[wasm_bindgen]
@@ -27,7 +30,12 @@ pub fn setup() {
 
 #[wasm_bindgen]
 pub fn greet(name: &str) {
-    alert(&format!("Hello, {}!", name));
+    log(&format!("Hello, {}!", name));
+}
+
+#[wasm_bindgen]
+pub fn receive_message(message: &str) {
+    log(&format!("Received message: {}", message));
 }
 
 #[wasm_bindgen]
