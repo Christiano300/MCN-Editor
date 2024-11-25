@@ -3,9 +3,7 @@ import init, { compile } from "mcn-ls";
 import * as monaco from "monaco-editor";
 
 import { initServices } from "monaco-languageclient/vscode/services";
-import {
-  MonacoLanguageClient,
-} from "monaco-languageclient";
+import { MonacoLanguageClient } from "monaco-languageclient";
 
 import {
   MessageTransports,
@@ -68,9 +66,7 @@ const vividColors = {
 init().then(async () => {
   const code = localStorage.getItem("monaco-editor-code") ?? "hi";
 
-  await initServices({
-    debugLogging: true,
-  });
+  await initServices({});
 
   monaco.languages.register({ id: "mcn-16" });
 
@@ -153,4 +149,6 @@ init().then(async () => {
   });
 
   languageClient.start();
+
+  document.querySelector("#loading")?.remove();
 });

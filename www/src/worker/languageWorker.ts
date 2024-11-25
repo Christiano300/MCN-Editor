@@ -63,6 +63,7 @@ init().then(async () => {
 
   connection.onDidChangeTextDocument(async (params) => {
     console.log("change", params);
+    receive_message("change")
     lsp.reload_document(
       params.contentChanges[0].text,
       params.textDocument.version
